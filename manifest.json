@@ -1,0 +1,22 @@
+﻿{
+    "name": "烂笔头",
+    "version": "1.0",
+    "description": "基于Chrome浏览器的划词记录工具",
+    "icons": { "128": "icon-128.png","64":"icon-64.png","16":"icon-16.png"},
+    "browser_action": {
+		"popup": "nib.html",
+		"default_icon": "icon-64.png"
+    },
+    "permissions": [
+    	"http://*/*",
+		"https://*/*"
+    ],
+    "background_page" : "background.html",
+    "content_scripts": [{
+	    "matches": ["http://*/*", "https://*/*"],
+	    "js": ["nib.js"],
+	    "all_frames":true
+  	}
+    ],
+    "update_url": "http://www.once.so/app/danci/version.php"
+}

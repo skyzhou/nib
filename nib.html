@@ -1,0 +1,125 @@
+﻿<html>
+	<head>
+		<style>
+			body{
+				height:170px;
+				width:210px;
+				font-size:12px;
+			}
+			.panel div{
+				padding:5px;
+			}
+			input{
+				margin:5px;
+			}
+			button{
+				margin:5px;
+			}
+			#username{
+				text-shadow: 0px -1px #ebd0d0,0 1px #fff;
+				color:#c97676;
+				font-weight:600;
+			}
+			#msg{
+				margin:10px;
+				color: #ff0000;
+			}
+			input{
+				padding:5px;
+				color:#c97676;
+			}
+			button{
+				background: #fac8c8;
+				border: 1px solid #e96b6b;
+				cursor:pointer;
+				padding:3px 6px;
+			}
+			button:hover{
+				background: #e96b6b;
+			}
+			#is_login button{	
+				display:block;
+				padding: 6px 15px;
+				width:160px;
+			}
+			#is_login 
+		</style>
+	</head>
+	<body>
+		<div>
+			<div class="panel">
+				<div id="no_login" style="display: none">
+					<div>
+						<label><input type="email" placeholder="邮箱地址" id="user" /></label>
+						<label><input type="password" placeholder="密码" id="pwd" /></label>
+					</div>
+						
+					<div>
+						<button onclick="hdl.login();">登 录</button><button onclick="hdl.reg()">注 册</button>
+					</div>
+				</div>
+				<div id="is_login" style="display: none">
+					<div>用户：<span id="username"></span></div>
+					<div>
+						<button onclick="hdl.exit();">注  销</button>
+					</div>
+				</div>
+				<div><span id="msg"></span></div>
+			</div>
+		</div>
+		<script src="util.js"></script>
+		<script>
+			var msg=function(msg){
+				$('msg').innerHTML=msg;
+			}
+			var hdl={
+				login:function(){
+					var user=$('user').value,pwd=$('pwd').value;
+					if(!user||!pwd){
+						return;
+					}
+					server({url:'http://www.once.so/app/nib/login.php', params:'action=1&user=' + encodeURIComponent(user) + '&pwd=' + encodeURIComponent(pwd) + '&time=' + parseInt(new Date() / 1000), callback:function(res) {
+							console.log(res);
+							if(res['ret']){
+								msg('用户名或密码错误');
+							}
+							else{
+								uKey(user+'|'+res['hash']);
+								init();
+							}
+							
+							
+						},type:'POST'});
+				},
+				reg:function(){
+					var user=$('user').value,pwd=$('pwd').value;
+					if(!user||!pwd){
+						return;
+					}
+					server({url:'http://www.once.so/app/nib/login.php', params:'action=2&user=' + encodeURIComponent(user) + '&pwd=' + encodeURIComponent(pwd) + '&time=' + parseInt(new Date() / 1000), callback:function(res) {
+							console.log(res);
+							if(res['ret']){
+								msg('用户名不可用');
+							}
+							else{
+								uKey(user+'|'+res['hash']);
+								init();
+							}
+						},type:'POST'});
+				},
+				exit:function(){
+					uKey('');
+					init();
+				}
+			}
+			var init=function(){
+				var key=uKey(),noLogin=$('no_login'),isLogin=$('is_login');
+				noLogin.style.display="none";
+				isLogin.style.display="none";
+				$('msg').innerHTML='';
+				(key?($('username').innerHTML=key.split('|')[0],isLogin):noLogin).style.display='block';
+			}
+			init();
+		</script>
+	</body>
+</html>
